@@ -1,0 +1,80 @@
+/*
+The answer is independent from the order of deciding colors to paint and the path. So let’s
+consider holding a bool table by deciding colors while moving.
+DP[i][j][k] = Can the unbalancedness of a path to square (i, j) be k?
+If the unbalancedness at square (i, j) is k, then unbalancedness at square (i + 1, j) is either
+k + |Ai+1,j − Bi+1,j | or |k − |Ai+1,j − Bi+1,j ||, depending on how to paint the numbers of square
+(i, j). The same is true for square (i, j + 1). Therefore, you can fill the table in the increasing
+order of i, j.
+Let M = max{|A11 − B11|, ..., |AHW − BHW |}, then you have to consider a maximum unbalancedness of O((H + W)M), so it can be solved in a total of O(HW(H + W)M) time. If you
+choose good order of calculation, you can solve in a total of O(min{H, W}(H + W)M) space.
+You can also accelerate the solution using bitset. 
+*/
+
+#include <bits/stdc++.h>
+#include <cstdio>
+#include <cstring>
+#include <cmath>
+#include <cstring>
+#include <chrono>
+#include <complex>
+#define endl "\n"
+#define ll long long int
+#define vi vector<int>
+#define vll vector<ll>
+#define vvi vector < vi >
+#define pii pair<int,int>
+#define pll pair<long long, long long>
+#define mod 1000000007
+#define inf 1000000000000000001;
+#define all(c) c.begin(),c.end()
+#define mp(x,y) make_pair(x,y)
+#define mem(a,val) memset(a,val,sizeof(a))
+#define eb emplace_back
+#define f first
+#define s second
+#define rep(i, n) for (int i = 0; i < (n); i++)
+using namespace std;
+
+int h, w;
+bool dp[80][80][16000];
+int ma[80][80], mb[80][80], d[80][80];
+
+int main(){
+    cin >> h >> w;
+    rep(i,h) rep(j,w) cin >> ma[i][j];
+    rep(i,h) rep(j,w) cin >> mb[i][j];
+    rep(i,h) rep(j,w) d[i][j] = abs(ma[i][j]-mb[i][j]);
+
+    dp[0][0][d[0][0]] = 1;
+
+    rep(i,h){
+      rep(j,w){
+      rep(k,16000){
+          if(dp[i][j][k]){
+              if(i+1 < h){
+                  dp[i+1][j][k+d[i+1][j]] = 1;
+                  dp[i+1][j][abs(k-d[i+1][j])] = 1;
+              }
+              if(j+1 < w){
+                  dp[i][j+1][k+d[i][j+1]] = 1;
+                  dp[i][j+1][abs(k-d[i][j+1])] = 1;
+              }
+          }
+      }
+    }
+  }
+ rep(k,10) cout<<dp[h-1][w-1][k]<<" ";
+    rep(k,640000) if(dp[h-1][w-1][k]){
+      cout << k << endl;
+      return 0;
+    }
+}
+
+/*
+2 3
+1 10 80
+80 10 1
+1 2 3
+4 5 6
+*/
